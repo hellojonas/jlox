@@ -198,10 +198,16 @@ public class Scanner {
 	}
 
 	private char peek() {
+		if (isAtEnd()) {
+			return '\0';
+		}
 		return source.charAt(cursor);
 	}
 
 	private char peekNext() {
+		if (cursor + 1 >= source.length()) {
+			return '\0';
+		}
 		return source.charAt(cursor + 1);
 	}
 
