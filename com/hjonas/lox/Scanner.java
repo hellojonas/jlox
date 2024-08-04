@@ -234,7 +234,7 @@ public class Scanner {
 	}
 
 	private boolean matchAdvance(char ch) {
-		if (source.charAt(cursor) == ch) {
+		if (!isAtEnd() && source.charAt(cursor) == ch) {
 			cursor++;
 			return true;
 		}
