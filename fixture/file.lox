@@ -1,0 +1,86 @@
+for (var i = 1; i < 5; i = i + 1) {
+  print i * i;
+}
+
+class Duck {
+  init(name) {
+    this.name = name;
+  }
+
+  quack() {
+    print this.name +" quacks";
+  }
+}
+
+var duck = Duck("Waddles");
+duck.quack();
+
+fun make_adder(n) {
+  fun adder(i) {
+    return n +i;
+  }
+  return adder;
+}
+
+fun quot(a, b) {
+	return a / b;
+}
+
+fun sub(a, b) {
+	return a - b;
+}
+
+fun mul(a, b) {
+	// multiplication
+	return a * b;
+}
+
+var res = quot(sub(10, 2), mul(2, 2));
+
+print res;
+print quot(sub(10, 2), mul(2, 2));
+
+var add5 = make_adder(5);
+print add5(1);
+print add5(100);
+
+// Output:
+// 1
+// 4
+// 9
+// 16
+// Waddles quacks
+// 6
+// 105
+
+class ListNode {
+  init(value) {
+    this.value = value;
+    this.next = nil;
+    this.previous = nil;
+  }
+}
+
+class List {
+  init() {
+    this.head = nil;
+    this.tail = nil;
+    this._length = 0; // So getting the length is O(1)
+  }
+
+  append(value) {
+    var node = ListNode(value);
+    if (this.head == nil) {
+      this.head = node;
+      this.tail = node;
+    } else {
+      node.previous = this.tail;
+      this.tail.next = node;
+      this.tail = node;
+    }
+    this._length = this._length + 1;
+    return this;
+  }
+
+  // ...
+}
