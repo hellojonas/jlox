@@ -126,7 +126,7 @@ public class Scanner {
 						identifier();
 						continue;
 					}
-					continue;
+					Lox.error(line, ("unexpected character"));
 				}
 			}
 		}
