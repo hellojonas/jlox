@@ -190,8 +190,8 @@ public class Scanner {
 	}
 
 	private void comment() {
-		while (!isAtEnd() && advance() != '\n') {
-			continue;
+		while (!isAtEnd() && peek() != '\n') {
+			advance();
 		}
 		line++;
 		start = cursor;
