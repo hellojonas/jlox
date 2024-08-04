@@ -121,7 +121,7 @@ public class Scanner {
 				}
 				default: {
 					if (isDigit(ch)) {
-						digits();
+						number();
 						continue;
 					} else if (isAlphaNum(ch)) {
 						identifier();
@@ -136,27 +136,22 @@ public class Scanner {
 		return tokens;
 	}
 
-	private void digits() {
-		while (!isAtEnd()) {
-			char ch = peek();
-			if (isDigit(ch)) {
+	private void number() {
+		while (isDigit(peek())) {
+			advance();
+		}
+
+		if (peek() == '.' && isDigit(peekNext())) {
+			advance();
+			while (isDigit(peek())) {
 				advance();
-				continue;
-			} else if (ch == '.' && isDigit(peekNext())) {
-				advance();
-				continue;
 			}
-			break;
 		}
 
 		String lexeme = source.substring(start, cursor);
 		start = cursor;
 
-		try {
-			addToken(TokenType.NUMBER, lexeme, Double.parseDouble(lexeme));
-		} catch (NumberFormatException e) {
-			Lox.error(line, "invalid number");
-		}
+		addToken(TokenType.NUMBER, lexeme, Double.parseDouble(lexeme));
 	}
 
 	private void identifier() {
