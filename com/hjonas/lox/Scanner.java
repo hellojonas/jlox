@@ -22,16 +22,16 @@ public class Scanner {
 
 	List<Token> scanTokens() {
 		while (!isAtEnd()) {
+			start = cursor;
 			char ch = advance();
 
 			switch (ch) {
 				case '\n': {
 					line++;
-					start = cursor;
 					continue;
 				}
-				case ' ': {
-					start = cursor;
+				case ' ':
+				case '\t': {
 					continue;
 				}
 				case ',': {
