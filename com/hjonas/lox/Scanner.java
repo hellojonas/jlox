@@ -176,15 +176,19 @@ public class Scanner {
 	}
 
 	private void string() {
-		char ch = peek();
 
-		while (ch != '"') {
-			ch = advance();
-
-			if (isAtEnd() && ch != '"') {
-				Lox.error(line, "unterminated string");
+		while (!isAtEnd() && peek() != '"') {
+			if (peek() == '\n') {
+				line++;
 			}
+			advance();
 		}
+
+		if (isAtEnd()) {
+			Lox.error(line, "unterminated string");
+		}
+
+		advance();
 
 		String lexeme = source.substring(start + 1, cursor - 1);
 		addToken(TokenType.STRING, lexeme, lexeme);
