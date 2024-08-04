@@ -31,6 +31,7 @@ public class Scanner {
 					continue;
 				}
 				case ' ':
+				case '\r':
 				case '\t': {
 					continue;
 				}
