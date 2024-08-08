@@ -11,13 +11,12 @@ public class AstPrinter implements Visitor<String> {
 	public static void main(String[] args) {
 		// (1 + 2) * 3
 		Expr.Binary expr = new Expr.Binary(
-				new Token(TokenType.STAR, "*", null, 0),
+				new Token(TokenType.STAR, "*", null, 1),
 				new Expr.Grouping(new Expr.Binary(
-						new Token(TokenType.PLUS, "+", null, 0),
+						new Token(TokenType.PLUS, "+", null, 1),
 						new Expr.Literal(1),
 						new Expr.Literal(2))),
 				new Expr.Literal(3));
-
 
 		System.out.println(new AstPrinter().print(expr));
 	}
@@ -28,25 +27,23 @@ public class AstPrinter implements Visitor<String> {
 
 	@Override
 	public String visitUnary(Unary unary) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Unimplemented method 'visitUnary'");
+		return String.format("%s %s", unary.operator.lexeme,
+				unary.right.accept(this));
 	}
 
 	@Override
-	public String visitBinary(Binary unary) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Unimplemented method 'visitBinary'");
+	public String visitBinary(Binary bin) {
+		return String.format("(%s %s %S)", bin.operator.lexeme, bin.left.accept(this),
+				bin.right.accept(this));
 	}
 
 	@Override
-	public String visitGroupping(Grouping unary) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Unimplemented method 'visitGroupping'");
+	public String visitGroupping(Grouping group) {
+		return String.format("(g: %s)", group.expr.accept(this));
 	}
 
 	@Override
-	public String visitLiteral(Literal unary) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Unimplemented method 'visitLiteral'");
+	public String visitLiteral(Literal lit) {
+		return lit.value.toString();
 	}
 }
