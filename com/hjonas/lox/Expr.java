@@ -5,11 +5,11 @@ public abstract class Expr {
 	static interface Visitor<R> {
 		R visitUnary(Unary unary);
 
-		R visitBinary(Binary unary);
+		R visitBinary(Binary binary);
 
-		R visitGroupping(Grouping unary);
+		R visitGroupping(Grouping grouping);
 
-		R visitLiteral(Literal unary);
+		R visitLiteral(Literal literal);
 	}
 
 	abstract <R> R accept(Visitor<R> visiror);
