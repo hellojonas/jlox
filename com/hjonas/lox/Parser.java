@@ -17,6 +17,7 @@ import static com.hjonas.lox.TokenType.PLUS;
 import static com.hjonas.lox.TokenType.RIGHT_PAREN;
 import static com.hjonas.lox.TokenType.SLASH;
 import static com.hjonas.lox.TokenType.STAR;
+import static com.hjonas.lox.TokenType.STRING;
 import static com.hjonas.lox.TokenType.TRUE;
 
 import java.util.List;
@@ -105,6 +106,9 @@ class Parser {
 			return new Expr.Literal(null);
 		}
 		if (match(NUMBER)) {
+			return new Expr.Literal(advance().literal);
+		}
+		if (match(STRING)) {
 			return new Expr.Literal(advance().literal);
 		}
 
