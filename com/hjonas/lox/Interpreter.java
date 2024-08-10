@@ -50,12 +50,15 @@ class Interpreter implements Expr.Visitor<Object> {
 				return (double) left * (double) right;
 			}
 			case SLASH: {
+				if (right instanceof Double && (double) right == 0) {
+					throw new RuntimeError(binary.operator, "division by zero.");
+				}
 				checkNumberOperands(binary.operator, left, right);
 				return (double) left / (double) right;
 			}
 			case PLUS: {
-				if (left instanceof String && right instanceof String) {
-					return (String) left + (String) right;
+				if (left instanceof String || right instanceof String) {
+					return stringify(left) +  stringify(right);
 				} else if (left instanceof Double && right instanceof Double) {
 					return (double) left + (double) right;
 				} else {
@@ -103,7 +106,7 @@ class Interpreter implements Expr.Visitor<Object> {
 		if (value == null) {
 			return "nil";
 		}
-		
+
 		if (value instanceof Double) {
 			String text = value.toString();
 			if (text.endsWith(".0")) {
