@@ -1,5 +1,8 @@
 package com.hjonas.lox;
 
+import static com.hjonas.lox.TokenType.SLASH;
+import static com.hjonas.lox.TokenType.STAR;
+
 import com.hjonas.lox.Expr.Binary;
 import com.hjonas.lox.Expr.Grouping;
 import com.hjonas.lox.Expr.Literal;
@@ -97,6 +100,18 @@ class Interpreter {
 			case MINUS: {
 				if (left instanceof Double && right instanceof Double) {
 					return (double) left - (double) right;
+				}
+				break;
+			}
+			case STAR: {
+				if (left instanceof Double && right instanceof Double) {
+					return (double) left * (double) right;
+				}
+				break;
+			}
+			case SLASH: {
+				if (left instanceof Double && right instanceof Double) {
+					return (double) left / (double) right;
 				}
 				break;
 			}
