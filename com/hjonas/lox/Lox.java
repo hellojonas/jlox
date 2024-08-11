@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Lox {
@@ -58,9 +59,16 @@ public class Lox {
 	private static void run(String source) {
 		Scanner scanner = new Scanner(source);
 		List<Token> tokens = scanner.scanTokens();
+		List<Stmt> statements = new Parser(tokens).parse();
 
-		Expr expr = new Parser(tokens).parse();
-		interpreter.interpret(expr);
+		try {
+			for (Stmt statement : statements) {
+				interpreter.interpret(statement);
+			}
+		} catch (RuntimeError e) {
+			error(e.token, e.getMessage());
+			hadRuntimeError = true;
+		}
 	}
 
 	static void error(Token token, String message) {
@@ -80,8 +88,8 @@ public class Lox {
 		hadError = true;
 	}
 
-    public static void runtimeError(RuntimeError e) {
+	public static void runtimeError(RuntimeError e) {
 		System.out.println(e.getMessage() + "\n[line " + e.token.line + "]");
 		hadRuntimeError = true;
-    }
+	}
 }

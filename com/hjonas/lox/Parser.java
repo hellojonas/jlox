@@ -14,12 +14,15 @@ import static com.hjonas.lox.TokenType.MINUS;
 import static com.hjonas.lox.TokenType.NIL;
 import static com.hjonas.lox.TokenType.NUMBER;
 import static com.hjonas.lox.TokenType.PLUS;
+import static com.hjonas.lox.TokenType.PRINT;
 import static com.hjonas.lox.TokenType.RIGHT_PAREN;
+import static com.hjonas.lox.TokenType.SEMICOLON;
 import static com.hjonas.lox.TokenType.SLASH;
 import static com.hjonas.lox.TokenType.STAR;
 import static com.hjonas.lox.TokenType.STRING;
 import static com.hjonas.lox.TokenType.TRUE;
 
+import java.util.ArrayList;
 import java.util.List;
 
 class Parser {
@@ -32,6 +35,23 @@ class Parser {
 	Parser(List<Token> tokens) {
 		this.tokens = tokens;
 		this.current = 0;
+	}
+
+	Stmt statement() {
+		if (match(PRINT)) {
+			advance();
+			return print();
+		}
+
+		Expr expr = expression();
+		consume(SEMICOLON, "expected ';' after expression.");
+		return new Stmt.Expression(expr);
+	}
+
+	Stmt print() {
+		Expr expr = expression();
+		consume(SEMICOLON, "expected ';' after expression.");
+		return new Stmt.Print(expr);
 	}
 
 	Expr expression() {
@@ -115,16 +135,19 @@ class Parser {
 		if (match(LEFT_PAREN)) {
 			advance();
 			Expr expr = expression();
-
-			if (!peek().type.equals(RIGHT_PAREN)) {
-				throw error(peek(), "expectd ).");
-			} else {
-				advance();
-				return expr;
-			}
+			consume(RIGHT_PAREN, "expected ')'.");
+			return expr;
 		}
 
 		throw error(peek(), "expected expression.");
+	}
+
+	private void consume(TokenType type, String message) {
+		if (peek().type.equals(type)) {
+			advance();
+			return;
+		}
+		throw error(peek(), message);
 	}
 
 	private Token advance() {
@@ -157,11 +180,13 @@ class Parser {
 		return new ParseError();
 	}
 
-	Expr parse() {
-		try {
-			return expression();
-		} catch (Exception e) {
-			return null;
+	List<Stmt> parse() {
+		List<Stmt> statements = new ArrayList<>();
+
+		while (!isAtEnd()) {
+			statements.add(statement());
 		}
+
+		return statements;
 	}
 }
