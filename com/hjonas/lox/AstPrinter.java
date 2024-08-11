@@ -4,9 +4,8 @@ import com.hjonas.lox.Expr.Binary;
 import com.hjonas.lox.Expr.Grouping;
 import com.hjonas.lox.Expr.Literal;
 import com.hjonas.lox.Expr.Unary;
-import com.hjonas.lox.Expr.Visitor;
 
-public class AstPrinter implements Visitor<String> {
+public class AstPrinter {
 
 	public static void main(String[] args) {
 		// (1 + 2) * 3
@@ -22,28 +21,43 @@ public class AstPrinter implements Visitor<String> {
 	}
 
 	String print(Expr expr) {
-		return expr.accept(this);
+		if (expr == null) {
+			return "";
+		}
+
+		String str = "";
+
+		if (expr instanceof Unary) {
+			str = visitUnary((Unary) expr);
+		} else if (expr instanceof Binary) {
+			str = visitBinary((Binary) expr);
+		} else if (expr instanceof Grouping) {
+			str = visitGroupping((Grouping) expr);
+		} else if (expr instanceof Literal) {
+			str = visitLiteral((Literal) expr);
+		}
+
+		return str;
 	}
 
-	@Override
 	public String visitUnary(Unary unary) {
-		return String.format("%s %s", unary.operator.lexeme,
-				unary.right.accept(this));
+		return String.format("(%s %s)", unary.operator.lexeme,
+				print(unary.right));
 	}
 
-	@Override
 	public String visitBinary(Binary bin) {
-		return String.format("(%s %s %S)", bin.operator.lexeme, bin.left.accept(this),
-				bin.right.accept(this));
+		return String.format("(%s %s %s)", bin.operator.lexeme,
+				print(bin.left), print(bin.right));
 	}
 
-	@Override
 	public String visitGroupping(Grouping group) {
-		return String.format("(g: %s)", group.expr.accept(this));
+		return String.format("(g: %s)", print(group.expression));
 	}
 
-	@Override
 	public String visitLiteral(Literal lit) {
+		if (lit.value == null) {
+			return "nil";
+		}
 		return lit.value.toString();
 	}
 }
