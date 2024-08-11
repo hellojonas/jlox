@@ -54,7 +54,11 @@ public class Lox {
 		Scanner scanner = new Scanner(source);
 		List<Token> tokens = scanner.scanTokens();
 		Expr expr = new Parser(tokens).parse();
-		System.out.println(new AstPrinter().print(expr));
+		try {
+			System.out.println(new Interpreter().interpret(expr));
+		} catch (RuntimeError e) {
+			error(e.token, e.getMessage());
+		}
 	}
 
 	static void error(Token token, String message) {
