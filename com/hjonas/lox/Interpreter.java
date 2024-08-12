@@ -1,5 +1,7 @@
 package com.hjonas.lox;
 
+import java.util.List;
+
 import com.hjonas.lox.Expr.Binary;
 import com.hjonas.lox.Expr.Grouping;
 import com.hjonas.lox.Expr.Literal;
@@ -58,9 +60,11 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 		throw new RuntimeError(operator, "operand must be a number.");
 	}
 
-	void interpret(Stmt statement) {
+	void interpret(List<Stmt> statements) {
 		try {
-			execute(statement);
+			for (Stmt statement : statements) {
+				execute(statement);
+			}
 		} catch (RuntimeError e) {
 			Lox.runtimeError(e);
 		}

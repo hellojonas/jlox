@@ -62,9 +62,7 @@ public class Lox {
 		List<Stmt> statements = new Parser(tokens).parse();
 
 		try {
-			for (Stmt statement : statements) {
-				interpreter.interpret(statement);
-			}
+			interpreter.interpret(statements);
 		} catch (RuntimeError e) {
 			error(e.token, e.getMessage());
 			hadRuntimeError = true;
