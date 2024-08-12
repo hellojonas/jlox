@@ -2,12 +2,15 @@ package com.hjonas.lox;
 
 import java.util.List;
 
+import javax.naming.OperationNotSupportedException;
+
 import com.hjonas.lox.Expr.Binary;
 import com.hjonas.lox.Expr.Grouping;
 import com.hjonas.lox.Expr.Literal;
 import com.hjonas.lox.Expr.Unary;
 import com.hjonas.lox.Stmt.Expression;
 import com.hjonas.lox.Stmt.Print;
+import com.hjonas.lox.Stmt.Variable;
 
 class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 
@@ -175,5 +178,17 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 		Object e = evaluate(expr.expr);
 		System.out.println(stringify(e));
 		return null;
+	}
+
+
+	@Override
+	public Object visitVariable(com.hjonas.lox.Expr.Variable variable) {
+		return evaluate(variable);
+	}
+
+	@Override
+	public Void visitVariable(Variable var) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Unimplemented method 'visitVariable'");
 	}
 }

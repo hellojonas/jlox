@@ -1,5 +1,7 @@
 package com.hjonas.lox;
 
+import com.hjonas.lox.Stmt.Variable;
+
 public abstract class Expr {
 
 	static interface Visitor<R> {
@@ -10,9 +12,11 @@ public abstract class Expr {
 		R visitGroupping(Grouping grouping);
 
 		R visitLiteral(Literal literal);
+
+		R visitVariable(Variable variable);
 	}
 
-	abstract <R> R accept(Visitor<R> visiror);
+	abstract <R> R accept(Visitor<R> visitor);
 
 	static class Unary extends Expr {
 		final Token operator;
@@ -24,8 +28,8 @@ public abstract class Expr {
 		}
 
 		@Override
-		<R> R accept(Visitor<R> visiror) {
-			return visiror.visitUnary(this);
+		<R> R accept(Visitor<R> visitor) {
+			return visitor.visitUnary(this);
 		}
 	}
 
@@ -41,8 +45,8 @@ public abstract class Expr {
 		}
 
 		@Override
-		<R> R accept(Visitor<R> visiror) {
-			return visiror.visitBinary(this);
+		<R> R accept(Visitor<R> visitor) {
+			return visitor.visitBinary(this);
 		}
 	}
 
@@ -54,8 +58,8 @@ public abstract class Expr {
 		}
 
 		@Override
-		<R> R accept(Visitor<R> visiror) {
-			return visiror.visitGroupping(this);
+		<R> R accept(Visitor<R> visitor) {
+			return visitor.visitGroupping(this);
 		}
 	}
 
@@ -67,8 +71,21 @@ public abstract class Expr {
 		}
 
 		@Override
-		<R> R accept(Visitor<R> visiror) {
-			return visiror.visitLiteral(this);
+		<R> R accept(Visitor<R> visitor) {
+			return visitor.visitLiteral(this);
+		}
+	}
+
+	static class Variable extends Expr {
+		final Token name;
+
+		Variable(Token name) {
+			this.name = name;
+		}
+
+		@Override
+		<R> R accept(Visitor<R> visitor) {
+			return visitor.visitVariable(this);
 		}
 	}
 }

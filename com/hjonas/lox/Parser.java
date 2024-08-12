@@ -3,10 +3,12 @@ package com.hjonas.lox;
 import static com.hjonas.lox.TokenType.BANG;
 import static com.hjonas.lox.TokenType.BANG_EQUAL;
 import static com.hjonas.lox.TokenType.EOF;
+import static com.hjonas.lox.TokenType.EQUAL;
 import static com.hjonas.lox.TokenType.EQUAL_EQUAL;
 import static com.hjonas.lox.TokenType.FALSE;
 import static com.hjonas.lox.TokenType.GREATER;
 import static com.hjonas.lox.TokenType.GREATER_EQUAL;
+import static com.hjonas.lox.TokenType.IDENTIFIER;
 import static com.hjonas.lox.TokenType.LEFT_PAREN;
 import static com.hjonas.lox.TokenType.LESS;
 import static com.hjonas.lox.TokenType.LESS_EQUAL;
@@ -35,6 +37,35 @@ class Parser {
 	Parser(List<Token> tokens) {
 		this.tokens = tokens;
 		this.current = 0;
+	}
+
+	Stmt declaration() {
+		try {
+			switch (peek().type) {
+				case VAR: {
+					advance();
+					return varDeclaration();
+				}
+			}
+
+			return statement();
+		} catch (RuntimeError e) {
+			synchronize();
+			return null;
+		}
+	}
+
+	Stmt varDeclaration() {
+		Token identifier = consume(IDENTIFIER, "expected identifier.");
+		Expr initializer = null;
+
+		if (match(EQUAL)) {
+			advance();
+			initializer = expression();
+		}
+
+		consume(SEMICOLON, "expected ';' after variable declaration.");
+		return new Stmt.Variable(identifier, initializer);
 	}
 
 	Stmt statement() {
@@ -131,6 +162,9 @@ class Parser {
 		if (match(STRING)) {
 			return new Expr.Literal(advance().literal);
 		}
+		if (match(IDENTIFIER)) {
+			return new Expr.Variable(advance());
+		}
 
 		if (match(LEFT_PAREN)) {
 			advance();
@@ -142,10 +176,9 @@ class Parser {
 		throw error(peek(), "expected expression.");
 	}
 
-	private void consume(TokenType type, String message) {
+	private Token consume(TokenType type, String message) {
 		if (peek().type.equals(type)) {
-			advance();
-			return;
+			return advance();
 		}
 		throw error(peek(), message);
 	}
@@ -184,9 +217,30 @@ class Parser {
 		List<Stmt> statements = new ArrayList<>();
 
 		while (!isAtEnd()) {
-			statements.add(statement());
+			statements.add(declaration());
 		}
 
 		return statements;
+	}
+
+	private void synchronize() {
+		while (!isAtEnd()) {
+			if (match(SEMICOLON)) {
+				advance();
+				return;
+			}
+
+			switch (peek().type) {
+				case IF:
+				case WHILE:
+				case FOR:
+				case CLASS:
+				case PRINT:
+				case FUN: {
+					return;
+				}
+			}
+			advance();
+		}
 	}
 }
