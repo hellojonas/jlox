@@ -13,6 +13,7 @@ import com.hjonas.lox.Stmt.Print;
 import com.hjonas.lox.Stmt.Variable;
 
 class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
+	Environment env = new Environment();
 
 	private boolean isTruthy(Object value) {
 		if (value == null) {
@@ -180,15 +181,18 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 		return null;
 	}
 
-
 	@Override
 	public Object visitVariable(com.hjonas.lox.Expr.Variable variable) {
-		return evaluate(variable);
+		return env.get(variable.name);
 	}
 
 	@Override
 	public Void visitVariable(Variable var) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Unimplemented method 'visitVariable'");
+		Object initializer = null;
+		if (var.initializer != null) {
+			initializer = evaluate(var.initializer);
+		}
+		env.define(var.name.lexeme, initializer);
+		return null;
 	}
 }
