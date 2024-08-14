@@ -9,6 +9,7 @@ import static com.hjonas.lox.TokenType.FALSE;
 import static com.hjonas.lox.TokenType.GREATER;
 import static com.hjonas.lox.TokenType.GREATER_EQUAL;
 import static com.hjonas.lox.TokenType.IDENTIFIER;
+import static com.hjonas.lox.TokenType.LEFT_BRACE;
 import static com.hjonas.lox.TokenType.LEFT_PAREN;
 import static com.hjonas.lox.TokenType.LESS;
 import static com.hjonas.lox.TokenType.LESS_EQUAL;
@@ -17,6 +18,7 @@ import static com.hjonas.lox.TokenType.NIL;
 import static com.hjonas.lox.TokenType.NUMBER;
 import static com.hjonas.lox.TokenType.PLUS;
 import static com.hjonas.lox.TokenType.PRINT;
+import static com.hjonas.lox.TokenType.RIGHT_BRACE;
 import static com.hjonas.lox.TokenType.RIGHT_PAREN;
 import static com.hjonas.lox.TokenType.SEMICOLON;
 import static com.hjonas.lox.TokenType.SLASH;
@@ -24,10 +26,9 @@ import static com.hjonas.lox.TokenType.STAR;
 import static com.hjonas.lox.TokenType.STRING;
 import static com.hjonas.lox.TokenType.TRUE;
 
+import java.beans.Statement;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.hjonas.lox.Expr.Variable;
 
 class Parser {
 	private static class ParseError extends RuntimeException {
@@ -76,9 +77,24 @@ class Parser {
 			return print();
 		}
 
+		if (match(LEFT_BRACE)) {
+			advance();
+			Stmt b = block();
+			return b;
+		}
+
 		Expr expr = expression();
 		consume(SEMICOLON, "expected ';' after expression.");
 		return new Stmt.Expression(expr);
+	}
+
+	Stmt block() {
+		List<Stmt> statments = new ArrayList<>();
+		while (!match(RIGHT_BRACE)) {
+			statments.add(declaration());
+		}
+		consume(RIGHT_BRACE, "expected } after block.");
+		return new Stmt.Block(statments);
 	}
 
 	Stmt print() {

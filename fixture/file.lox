@@ -1,2 +1,8 @@
-print 1 + 2;
-print (2 + 4) * 10;
+var out = 10;
+
+{
+	var out = 1001;
+	print out;
+}
+
+print out;

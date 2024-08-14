@@ -1,11 +1,19 @@
 package com.hjonas.lox;
 
+import java.beans.Statement;
+import java.util.ArrayList;
+import java.util.List;
+
 abstract class Stmt {
 
 	static interface Visitor<R> {
 		R visitExpression(Expression expr);
+
 		R visitPrint(Print print);
+
 		R visitVariable(Variable var);
+
+		R visitBlock(Block block);
 	}
 
 	abstract <R> R accept(Visitor<R> visitor);
@@ -48,6 +56,19 @@ abstract class Stmt {
 		@Override
 		<R> R accept(Visitor<R> visitor) {
 			return visitor.visitVariable(this);
+		}
+	}
+
+	static class Block extends Stmt {
+		final List<Stmt> statements;
+
+		Block(List<Stmt> statements) {
+			this.statements = statements;
+		}
+
+		@Override
+		<R> R accept(Visitor<R> visitor) {
+			return visitor.visitBlock(this);
 		}
 	}
 }
