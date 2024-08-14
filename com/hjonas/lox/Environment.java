@@ -14,10 +14,20 @@ class Environment {
 		env.put(name, value);
 	}
 
+	Object assign(Token name, Object value) {
+		if (!env.containsKey(name.lexeme)) {
+			throw new RuntimeError(name, "undefined variable");
+		}
+
+		env.put(name.lexeme, value);
+		return value;
+	}
+
 	Object get(Token name) {
 		if (!env.containsKey(name.lexeme)) {
 			throw new RuntimeError(name, "undefined variable");
 		}
+
 		return env.get(name.lexeme);
 	}
 }

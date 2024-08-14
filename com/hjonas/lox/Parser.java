@@ -27,6 +27,8 @@ import static com.hjonas.lox.TokenType.TRUE;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.hjonas.lox.Expr.Variable;
+
 class Parser {
 	private static class ParseError extends RuntimeException {
 	}
@@ -86,7 +88,24 @@ class Parser {
 	}
 
 	Expr expression() {
-		return equality();
+		return assignment();
+	}
+
+	Expr assignment() {
+		Expr expr = equality();
+
+		if (match(EQUAL)) {
+			Token token = advance();
+			Expr value = equality();
+
+			if (expr instanceof Expr.Variable) {
+				return new Expr.Assign(((Expr.Variable) expr).name, value);
+			}
+
+			Lox.error(token, "invalid assignment identifier");
+		}
+
+		return expr;
 	}
 
 	Expr equality() {

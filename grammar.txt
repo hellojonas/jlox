@@ -12,7 +12,10 @@ exprStatement			::=  expression ";"
 
 printStatement			::= "print" expression ";" 
 
-expression				::= equality ;
+expression				::= assign ;
+
+assign					::= IDENTIFIER "=" assign
+							| equality ;
 
 equality				::= comparison ( ( "==" | "!=" ) comparison )* ;
 

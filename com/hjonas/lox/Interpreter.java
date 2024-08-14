@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.naming.OperationNotSupportedException;
 
+import com.hjonas.lox.Expr.Assign;
 import com.hjonas.lox.Expr.Binary;
 import com.hjonas.lox.Expr.Grouping;
 import com.hjonas.lox.Expr.Literal;
@@ -194,5 +195,10 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 		}
 		env.define(var.name.lexeme, initializer);
 		return null;
+	}
+
+	@Override
+	public Object visitAssign(Assign assign) {
+		return env.assign(assign.name, evaluate(assign.value));
 	}
 }
