@@ -1,7 +1,5 @@
 package com.hjonas.lox;
 
-import java.beans.Statement;
-import java.util.ArrayList;
 import java.util.List;
 
 abstract class Stmt {
@@ -14,6 +12,8 @@ abstract class Stmt {
 		R visitVariable(Variable var);
 
 		R visitBlock(Block block);
+
+		R visitIfStmt(IfStmt ifStmt);
 	}
 
 	abstract <R> R accept(Visitor<R> visitor);
@@ -69,6 +69,23 @@ abstract class Stmt {
 		@Override
 		<R> R accept(Visitor<R> visitor) {
 			return visitor.visitBlock(this);
+		}
+	}
+
+	static class IfStmt extends Stmt {
+		final Expr condition;
+		final Stmt thenBranch;
+		final Stmt elseBranch;
+
+		IfStmt(Expr condition, Stmt thenBranch, Stmt elseBranch) {
+			this.condition = condition;
+			this.thenBranch = thenBranch;
+			this.elseBranch = elseBranch;
+		}
+
+		@Override
+		<R> R accept(Visitor<R> visitor) {
+			return visitor.visitIfStmt(this);
 		}
 	}
 }

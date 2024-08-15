@@ -1,8 +1,14 @@
-var out = 10;
+var test = 10;
 
-{
-	var out = 1001;
-	print out;
+if (test > 0) {
+	var test = 1001;
+	print "[inner] test = " + test;
 }
 
-print out;
+if (test < 0) {
+	print "test is negative";
+} else {
+	print "test is positive";
+}
+
+if (test == 10) print "test is " + test; else "test is not 10";

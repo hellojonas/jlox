@@ -2,6 +2,7 @@ package com.hjonas.lox;
 
 import static com.hjonas.lox.TokenType.BANG;
 import static com.hjonas.lox.TokenType.BANG_EQUAL;
+import static com.hjonas.lox.TokenType.ELSE;
 import static com.hjonas.lox.TokenType.EOF;
 import static com.hjonas.lox.TokenType.EQUAL;
 import static com.hjonas.lox.TokenType.EQUAL_EQUAL;
@@ -9,6 +10,7 @@ import static com.hjonas.lox.TokenType.FALSE;
 import static com.hjonas.lox.TokenType.GREATER;
 import static com.hjonas.lox.TokenType.GREATER_EQUAL;
 import static com.hjonas.lox.TokenType.IDENTIFIER;
+import static com.hjonas.lox.TokenType.IF;
 import static com.hjonas.lox.TokenType.LEFT_BRACE;
 import static com.hjonas.lox.TokenType.LEFT_PAREN;
 import static com.hjonas.lox.TokenType.LESS;
@@ -77,6 +79,11 @@ class Parser {
 			return print();
 		}
 
+		if (match(IF)) {
+			advance();
+			return ifStatement();
+		}
+
 		if (match(LEFT_BRACE)) {
 			advance();
 			Stmt b = block();
@@ -86,6 +93,22 @@ class Parser {
 		Expr expr = expression();
 		consume(SEMICOLON, "expected ';' after expression.");
 		return new Stmt.Expression(expr);
+	}
+
+	Stmt ifStatement() {
+		consume(LEFT_PAREN, "expected '(' after if statement.");
+		Expr condition = expression();
+		consume(RIGHT_PAREN, "expected ')' after expression.");
+
+		Stmt thenBranch = statement();
+		Stmt elseBranch = null;
+
+		if (match(ELSE)) {
+			advance();
+			elseBranch = statement();
+		}
+
+		return new Stmt.IfStmt(condition, thenBranch, elseBranch);
 	}
 
 	Stmt block() {

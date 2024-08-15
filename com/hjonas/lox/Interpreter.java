@@ -2,8 +2,6 @@ package com.hjonas.lox;
 
 import java.util.List;
 
-import javax.naming.OperationNotSupportedException;
-
 import com.hjonas.lox.Expr.Assign;
 import com.hjonas.lox.Expr.Binary;
 import com.hjonas.lox.Expr.Grouping;
@@ -11,6 +9,7 @@ import com.hjonas.lox.Expr.Literal;
 import com.hjonas.lox.Expr.Unary;
 import com.hjonas.lox.Stmt.Block;
 import com.hjonas.lox.Stmt.Expression;
+import com.hjonas.lox.Stmt.IfStmt;
 import com.hjonas.lox.Stmt.Print;
 import com.hjonas.lox.Stmt.Variable;
 
@@ -220,5 +219,18 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 		} finally {
 			this.env = previous;
 		}
+	}
+
+	@Override
+	public Void visitIfStmt(IfStmt ifStmt) {
+		Object condition = evaluate(ifStmt.condition);
+
+		if (isTruthy(condition)) {
+			execute(ifStmt.thenBranch);
+		} else if (ifStmt.elseBranch != null) {
+			execute(ifStmt.elseBranch);
+		}
+
+		return null;
 	}
 }

@@ -7,7 +7,11 @@ varDecl					::= "var" IDENTIFIER ( "=" expression )? ";" ;
 
 statement				::= exprStatement 
 							| printStatement 
+							| ifStatement
 							| block;
+
+ifStatement				::= "if" "(" expression ")" statement
+							"else" statement ;
 
 block					::= "{" declaration* "}"
 
