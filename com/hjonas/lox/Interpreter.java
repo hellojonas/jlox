@@ -60,10 +60,10 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 	}
 
 	private void checkNumberOperands(Token operator, Object left, Object right) {
-		if (right instanceof Double) {
+		if (left instanceof Double && right instanceof Double) {
 			return;
 		}
-		throw new RuntimeError(operator, "operand must be a number.");
+		throw new RuntimeError(operator, "operands must be a number.");
 	}
 
 	void interpret(List<Stmt> statements) {
@@ -135,19 +135,19 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 			}
 			case GREATER: {
 				checkNumberOperands(binary.operator, left, right);
-				return (double) right > (double) left;
+				return (double) left > (double) right;
 			}
 			case GREATER_EQUAL: {
 				checkNumberOperands(binary.operator, left, right);
-				return (double) right >= (double) left;
+				return (double) left >= (double) right;
 			}
 			case LESS: {
 				checkNumberOperands(binary.operator, left, right);
-				return (double) right < (double) left;
+				return (double) left < (double) right;
 			}
 			case LESS_EQUAL: {
 				checkNumberOperands(binary.operator, left, right);
-				return (double) right <= (double) left;
+				return (double) left <= (double) right;
 			}
 			case EQUAL_EQUAL: {
 				return isEqual(left, right);
