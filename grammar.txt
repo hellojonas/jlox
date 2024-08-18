@@ -8,7 +8,10 @@ varDecl					::= "var" IDENTIFIER ( "=" expression )? ";" ;
 statement				::= exprStatement 
 							| printStatement 
 							| ifStatement
-							| block;
+							| block
+							| while ;
+
+whilStmt				::= "while" "(" expression ")" statement ;
 
 ifStatement				::= "if" "(" expression ")" statement
 							"else" statement ;

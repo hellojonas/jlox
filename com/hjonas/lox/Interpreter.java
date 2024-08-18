@@ -12,6 +12,7 @@ import com.hjonas.lox.Stmt.Expression;
 import com.hjonas.lox.Stmt.IfStmt;
 import com.hjonas.lox.Stmt.Print;
 import com.hjonas.lox.Stmt.Variable;
+import com.hjonas.lox.Stmt.WhileStmt;
 
 class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 	Environment env = new Environment();
@@ -249,6 +250,14 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 			execute(ifStmt.elseBranch);
 		}
 
+		return null;
+	}
+
+	@Override
+	public Void visitWhileStmt(WhileStmt whileStmt) {
+		while (isTruthy(evaluate(whileStmt.condition))) {
+			execute(whileStmt.body);
+		}
 		return null;
 	}
 }

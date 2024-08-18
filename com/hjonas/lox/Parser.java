@@ -29,9 +29,12 @@ import static com.hjonas.lox.TokenType.SLASH;
 import static com.hjonas.lox.TokenType.STAR;
 import static com.hjonas.lox.TokenType.STRING;
 import static com.hjonas.lox.TokenType.TRUE;
+import static com.hjonas.lox.TokenType.WHILE;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import com.hjonas.lox.Stmt.WhileStmt;
 
 class Parser {
 	private static class ParseError extends RuntimeException {
@@ -91,9 +94,25 @@ class Parser {
 			return b;
 		}
 
+		if (match(WHILE)) {
+			advance();
+			Stmt w = whileStmt();
+			return w;
+		}
+
 		Expr expr = expression();
 		consume(SEMICOLON, "expected ';' after expression.");
 		return new Stmt.Expression(expr);
+	}
+
+	Stmt whileStmt() {
+		consume(LEFT_PAREN, "expected '(' after while statement.");
+		Expr condition = expression();
+		consume(RIGHT_PAREN, "expected ')' after conditiion.");
+
+		Stmt body = statement();
+
+		return new Stmt.WhileStmt(condition, body);
 	}
 
 	Stmt ifStatement() {

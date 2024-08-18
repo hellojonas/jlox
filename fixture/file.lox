@@ -1,14 +1,6 @@
-var test = 10;
+var i = 0;
 
-if (test > 0) {
-	var test = 1001;
-	print "[inner] test = " + test;
+while (i < 10) {
+	print i;
+	i = i + 1;
 }
-
-if (test < 0) {
-	print "test is negative";
-} else {
-	print "test is positive";
-}
-
-if (test == 10) print "test is " + test; else "test is not 10";
