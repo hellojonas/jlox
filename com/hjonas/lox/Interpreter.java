@@ -222,7 +222,7 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 
 	@Override
 	public Void visitBlock(Block block) {
-		executeBlock(block.statements, new Environment());
+		executeBlock(block.statements, new Environment(this.env));
 		return null;
 	}
 
