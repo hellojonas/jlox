@@ -1,5 +1,6 @@
 package com.hjonas.lox;
 
+import static com.hjonas.lox.TokenType.AND;
 import static com.hjonas.lox.TokenType.BANG;
 import static com.hjonas.lox.TokenType.BANG_EQUAL;
 import static com.hjonas.lox.TokenType.ELSE;
@@ -18,6 +19,7 @@ import static com.hjonas.lox.TokenType.LESS_EQUAL;
 import static com.hjonas.lox.TokenType.MINUS;
 import static com.hjonas.lox.TokenType.NIL;
 import static com.hjonas.lox.TokenType.NUMBER;
+import static com.hjonas.lox.TokenType.OR;
 import static com.hjonas.lox.TokenType.PLUS;
 import static com.hjonas.lox.TokenType.PRINT;
 import static com.hjonas.lox.TokenType.RIGHT_BRACE;
@@ -28,7 +30,6 @@ import static com.hjonas.lox.TokenType.STAR;
 import static com.hjonas.lox.TokenType.STRING;
 import static com.hjonas.lox.TokenType.TRUE;
 
-import java.beans.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -131,17 +132,39 @@ class Parser {
 	}
 
 	Expr assignment() {
-		Expr expr = equality();
+		Expr expr = or();
 
 		if (match(EQUAL)) {
 			Token token = advance();
-			Expr value = equality();
+			Expr value = or();
 
 			if (expr instanceof Expr.Variable) {
 				return new Expr.Assign(((Expr.Variable) expr).name, value);
 			}
 
 			Lox.error(token, "invalid assignment identifier");
+		}
+
+		return expr;
+	}
+
+	Expr or() {
+		Expr expr = and();
+
+		while (match(OR)) {
+			Token operator = advance();
+			expr = new Expr.Binary(operator, expr, and());
+		}
+
+		return expr;
+	}
+
+	Expr and() {
+		Expr expr = equality();
+
+		while (match(AND)) {
+			Token operator = advance();
+			expr = new Expr.Binary(operator, expr, equality());
 		}
 
 		return expr;

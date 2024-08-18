@@ -103,6 +103,24 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 
 	@Override
 	public Object visitBinary(Binary binary) {
+
+		switch (binary.operator.type) {
+			case OR: {
+				Object left = evaluate(binary.left);
+				if (isTruthy(left)) {
+					return left;
+				}
+				return evaluate(binary.right);
+			}
+			case AND: {
+				Object left = evaluate(binary.left);
+				if (!isTruthy(left)) {
+					return left;
+				}
+				return evaluate(binary.right);
+			}
+		}
+
 		Object left = evaluate(binary.left);
 		Object right = evaluate(binary.right);
 
