@@ -43,5 +43,8 @@ public enum TokenType {
 	STRING,
 	NUMBER,
 
+	BREAK,
+	CONTINUE,
+
 	EOF
 }

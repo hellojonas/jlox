@@ -16,6 +16,8 @@ abstract class Stmt {
 		R visitIfStmt(IfStmt ifStmt);
 
 		R visitWhileStmt(WhileStmt whileStmt);
+
+		R visitBreakStmt(BreakStmt breakStmt);
 	}
 
 	abstract <R> R accept(Visitor<R> visitor);
@@ -103,6 +105,19 @@ abstract class Stmt {
 		@Override
 		<R> R accept(Visitor<R> visitor) {
 			return visitor.visitWhileStmt(this);
+		}
+	}
+
+	static class BreakStmt extends Stmt {
+		final Token token;
+
+		BreakStmt(Token token) {
+			this.token = token;
+		}
+
+		@Override
+		<R> R accept(Visitor<R> visitor) {
+			return visitor.visitBreakStmt(this);
 		}
 	}
 }

@@ -269,6 +269,8 @@ public class Scanner {
 			put("fun", TokenType.FUN);
 			put("return", TokenType.RETURN);
 			put("nil", TokenType.NIL);
+			put("break", TokenType.BREAK);
+			put("continue", TokenType.CONTINUE);
 		}
 	};
 }

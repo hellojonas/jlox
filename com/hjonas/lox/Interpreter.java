@@ -8,6 +8,7 @@ import com.hjonas.lox.Expr.Grouping;
 import com.hjonas.lox.Expr.Literal;
 import com.hjonas.lox.Expr.Unary;
 import com.hjonas.lox.Stmt.Block;
+import com.hjonas.lox.Stmt.BreakStmt;
 import com.hjonas.lox.Stmt.Expression;
 import com.hjonas.lox.Stmt.IfStmt;
 import com.hjonas.lox.Stmt.Print;
@@ -15,6 +16,15 @@ import com.hjonas.lox.Stmt.Variable;
 import com.hjonas.lox.Stmt.WhileStmt;
 
 class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
+	static class BreakError extends RuntimeException {
+		final Token token;
+
+		BreakError(Token token, String message) {
+			super(message);
+			this.token = token;
+		}
+	}
+
 	Environment env = new Environment();
 
 	private boolean isTruthy(Object value) {
@@ -256,8 +266,17 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 	@Override
 	public Void visitWhileStmt(WhileStmt whileStmt) {
 		while (isTruthy(evaluate(whileStmt.condition))) {
-			execute(whileStmt.body);
+			try {
+				execute(whileStmt.body);
+			} catch (BreakError e) {
+				break;
+			}
 		}
 		return null;
+	}
+
+	@Override
+	public Void visitBreakStmt(BreakStmt breakStmt) {
+		throw new BreakError(breakStmt.token, "unexpeced token 'break' outside of loop.");
 	}
 }

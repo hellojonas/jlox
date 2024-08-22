@@ -9,14 +9,15 @@ statement				::= exprStatement
 							| printStatement 
 							| ifStatement
 							| block
-							| while ;
+							| while 
+							| break ;
 
 whilStmt				::= "while" "(" expression ")" statement ;
 
 ifStatement				::= "if" "(" expression ")" statement
 							"else" statement ;
 
-block					::= "{" declaration* "}"
+block					::= "{" declaration* "}" ;
 
 exprStatement			::=  expression ";"
 

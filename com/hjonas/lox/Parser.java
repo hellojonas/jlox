@@ -3,6 +3,7 @@ package com.hjonas.lox;
 import static com.hjonas.lox.TokenType.AND;
 import static com.hjonas.lox.TokenType.BANG;
 import static com.hjonas.lox.TokenType.BANG_EQUAL;
+import static com.hjonas.lox.TokenType.BREAK;
 import static com.hjonas.lox.TokenType.ELSE;
 import static com.hjonas.lox.TokenType.EOF;
 import static com.hjonas.lox.TokenType.EQUAL;
@@ -103,6 +104,12 @@ class Parser {
 
 		if (match(FOR)) {
 			return forStatement();
+		}
+
+		if (match(BREAK)) {
+			Stmt breakStmt = new Stmt.BreakStmt(advance());
+			consume(SEMICOLON, "expected ';' after 'break'.");
+			return breakStmt;
 		}
 
 		return expressionStatement();
