@@ -8,6 +8,7 @@ import static com.hjonas.lox.TokenType.EOF;
 import static com.hjonas.lox.TokenType.EQUAL;
 import static com.hjonas.lox.TokenType.EQUAL_EQUAL;
 import static com.hjonas.lox.TokenType.FALSE;
+import static com.hjonas.lox.TokenType.FOR;
 import static com.hjonas.lox.TokenType.GREATER;
 import static com.hjonas.lox.TokenType.GREATER_EQUAL;
 import static com.hjonas.lox.TokenType.IDENTIFIER;
@@ -29,12 +30,12 @@ import static com.hjonas.lox.TokenType.SLASH;
 import static com.hjonas.lox.TokenType.STAR;
 import static com.hjonas.lox.TokenType.STRING;
 import static com.hjonas.lox.TokenType.TRUE;
+import static com.hjonas.lox.TokenType.VAR;
 import static com.hjonas.lox.TokenType.WHILE;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-
-import com.hjonas.lox.Stmt.WhileStmt;
 
 class Parser {
 	private static class ParseError extends RuntimeException {
@@ -100,9 +101,70 @@ class Parser {
 			return w;
 		}
 
+		if (match(FOR)) {
+			return forStatement();
+		}
+
+		return expressionStatement();
+	}
+
+	Stmt expressionStatement() {
 		Expr expr = expression();
 		consume(SEMICOLON, "expected ';' after expression.");
 		return new Stmt.Expression(expr);
+	}
+
+	Stmt forStatement() {
+		advance();
+		consume(LEFT_PAREN, "expected '(' after 'for'.");
+		Stmt init = null;
+
+		if (match(VAR)) {
+			advance();
+			init = varDeclaration();
+		} else if (match(SEMICOLON)) {
+			advance();
+		} else {
+			init = expressionStatement();
+		}
+
+		Expr condition = null;
+		if (match(SEMICOLON)) {
+			advance();
+		} else {
+			condition = expression();
+			consume(SEMICOLON, "expected ';' after condition.");
+		}
+
+		Expr increment = null;
+		if (match(RIGHT_PAREN)) {
+			advance();
+		} else {
+			increment = expression();
+			consume(RIGHT_PAREN, "expected ')' after increment.");
+		}
+
+		Stmt body = null;
+
+		if (increment == null) {
+			body = statement();
+		} else {
+			body = new Stmt.Block(Arrays.asList(statement(), new Stmt.Expression(increment)));
+		}
+
+		Stmt loopStmt = null;
+
+		if (condition == null) {
+			loopStmt = new Stmt.WhileStmt(new Expr.Literal(true), body);
+		} else {
+			loopStmt = new Stmt.WhileStmt(condition, body);
+		}
+
+		if (init == null) {
+			return loopStmt;
+		} else {
+			return new Stmt.Block(Arrays.asList(init, loopStmt));
+		}
 	}
 
 	Stmt whileStmt() {
