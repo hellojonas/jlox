@@ -1,9 +1,9 @@
-fun count(n) {
-	if (n > 1) {
-		count(n - 1);
+fun sum(n) {
+	if (n == 1) {
+		return 1;
 	}
 
-	print n;
+	return n + sum(n - 1);
 }
 
-count(10);
+print sum(5);

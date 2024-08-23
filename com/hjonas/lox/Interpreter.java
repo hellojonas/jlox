@@ -15,19 +15,11 @@ import com.hjonas.lox.Stmt.Expression;
 import com.hjonas.lox.Stmt.Function;
 import com.hjonas.lox.Stmt.IfStmt;
 import com.hjonas.lox.Stmt.Print;
+import com.hjonas.lox.Stmt.ReturnStmt;
 import com.hjonas.lox.Stmt.Variable;
 import com.hjonas.lox.Stmt.WhileStmt;
 
 class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
-	static class BreakError extends RuntimeException {
-		final Token token;
-
-		BreakError(Token token, String message) {
-			super(message);
-			this.token = token;
-		}
-	}
-
 	final Environment globals = new Environment();
 	private Environment env = globals;
 
@@ -292,7 +284,7 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 		while (isTruthy(evaluate(whileStmt.condition))) {
 			try {
 				execute(whileStmt.body);
-			} catch (BreakError e) {
+			} catch (Break e) {
 				break;
 			}
 		}
@@ -301,7 +293,7 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 
 	@Override
 	public Void visitBreakStmt(BreakStmt breakStmt) {
-		throw new BreakError(breakStmt.token, "unexpeced token 'break' outside of loop.");
+		throw new Break(breakStmt.token, "unexpeced token 'break' outside of loop.");
 	}
 
 	@Override
@@ -331,5 +323,16 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 	public Void visitFunctionStmt(Function function) {
 		env.define(function.name.lexeme, new LoxFunction(function));
 		return null;
+	}
+
+	@Override
+	public Void visitReturnStmt(ReturnStmt returnStmt) {
+		Object value = null;
+
+		if (returnStmt.value != null) {
+			value = evaluate(returnStmt.value);
+		}
+
+		throw new Return(value);
 	}
 }

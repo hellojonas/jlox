@@ -20,6 +20,8 @@ abstract class Stmt {
 		R visitBreakStmt(BreakStmt breakStmt);
 
 		R visitFunctionStmt(Function function);
+
+		R visitReturnStmt(ReturnStmt returnStmt);
 	}
 
 	abstract <R> R accept(Visitor<R> visitor);
@@ -137,6 +139,21 @@ abstract class Stmt {
 		@Override
 		<R> R accept(Visitor<R> visitor) {
 			return visitor.visitFunctionStmt(this);
+		}
+	}
+
+	static class ReturnStmt extends Stmt {
+		final Token token;
+		final Expr value;
+
+		ReturnStmt(Token token, Expr value) {
+			this.token = token;
+			this.value = value;
+		}
+
+		@Override
+		<R> R accept(Visitor<R> visitor) {
+			return visitor.visitReturnStmt(this);
 		}
 	}
 }

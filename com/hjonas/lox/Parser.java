@@ -26,6 +26,7 @@ import static com.hjonas.lox.TokenType.NUMBER;
 import static com.hjonas.lox.TokenType.OR;
 import static com.hjonas.lox.TokenType.PLUS;
 import static com.hjonas.lox.TokenType.PRINT;
+import static com.hjonas.lox.TokenType.RETURN;
 import static com.hjonas.lox.TokenType.RIGHT_BRACE;
 import static com.hjonas.lox.TokenType.RIGHT_PAREN;
 import static com.hjonas.lox.TokenType.SEMICOLON;
@@ -118,6 +119,19 @@ class Parser {
 		if (match(FUN)) {
 			advance();
 			return function("function");
+		}
+
+		if (match(RETURN)) {
+			Token token = advance();
+			Expr value = null;
+
+			if (!match(SEMICOLON)) {
+				value = expression();
+			}
+
+			consume(SEMICOLON, "expected ';' after return value.");
+			return new Stmt.ReturnStmt(token, value);
+
 		}
 
 		return expressionStatement();

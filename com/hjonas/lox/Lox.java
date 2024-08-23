@@ -10,8 +10,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 
-import com.hjonas.lox.Interpreter.BreakError;
-
 public class Lox {
 	static boolean hadError = false;
 	static boolean hadRuntimeError = false;
@@ -67,7 +65,7 @@ public class Lox {
 		} catch (RuntimeError e) {
 			error(e.token, e.getMessage());
 			hadRuntimeError = true;
-		} catch (BreakError e) {
+		} catch (Break e) {
 			error(e.token, e.getMessage());
 			hadRuntimeError = true;
 		}
