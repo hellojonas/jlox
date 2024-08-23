@@ -321,7 +321,7 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 
 	@Override
 	public Void visitFunctionStmt(Function function) {
-		env.define(function.name.lexeme, new LoxFunction(function));
+		env.define(function.name.lexeme, new LoxFunction(function, env));
 		return null;
 	}
 

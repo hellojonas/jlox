@@ -1,9 +1,18 @@
-fun sum(n) {
-	if (n == 1) {
-		return 1;
+fun makeAdder(n) {
+	fun add (a) {
+		return n + a;
 	}
 
-	return n + sum(n - 1);
+	return add;
 }
 
-print sum(5);
+var a1 = makeAdder(10);
+
+print a1(4);
+
+fun scope(a) {
+	var a = 10;
+	print a;
+}
+
+scope(11);
