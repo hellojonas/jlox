@@ -1,7 +1,14 @@
 program					::= declaration* EOF ;
 
 declaration				::= varDecl
+							| funDecl
 							| statement ;
+
+funDecl					::= "fun" function ;
+
+function				::= IDENTIFIER "(" paramters? ")" ;
+
+parameters				;:= IDENTIFIER ( "," IDENTIFIER )* ;
 
 varDecl					::= "var" IDENTIFIER ( "=" expression )? ";" ;
 
@@ -21,7 +28,7 @@ block					::= "{" declaration* "}" ;
 
 exprStatement			::=  expression ";"
 
-printStatement			::= "print" expression ";" 
+printStatement			::= "print" expression ";"  ;
 
 expression				::= assign ;
 

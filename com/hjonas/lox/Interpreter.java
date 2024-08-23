@@ -12,6 +12,7 @@ import com.hjonas.lox.Expr.Unary;
 import com.hjonas.lox.Stmt.Block;
 import com.hjonas.lox.Stmt.BreakStmt;
 import com.hjonas.lox.Stmt.Expression;
+import com.hjonas.lox.Stmt.Function;
 import com.hjonas.lox.Stmt.IfStmt;
 import com.hjonas.lox.Stmt.Print;
 import com.hjonas.lox.Stmt.Variable;
@@ -27,7 +28,28 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 		}
 	}
 
-	Environment env = new Environment();
+	final Environment globals = new Environment();
+	private Environment env = globals;
+
+	Interpreter() {
+		this.globals.define("clock", new LoxCallable() {
+
+			@Override
+			public int arity() {
+				return 0;
+			}
+
+			@Override
+			public Object call(Interpreter interpreter, List<Object> arguments) {
+				return (double) System.currentTimeMillis() / 1000;
+			}
+
+			@Override
+			public String toString() {
+				return "<native fn>";
+			}
+		});
+	}
 
 	private boolean isTruthy(Object value) {
 		if (value == null) {
@@ -239,7 +261,7 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 		return null;
 	}
 
-	private void executeBlock(List<Stmt> statements, Environment environment) {
+	public void executeBlock(List<Stmt> statements, Environment environment) {
 		Environment previous = this.env;
 		try {
 			this.env = environment;
@@ -292,7 +314,7 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 		}
 
 		if (!(callee instanceof LoxCallable)) {
-			throw new RuntimeError(call.paren, "Can oly call functions and classes.");
+			throw new RuntimeError(call.paren, "Can only call functions and classes.");
 		}
 
 		LoxCallable function = (LoxCallable) callee;
@@ -303,5 +325,11 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 		}
 
 		return function.call(this, args);
+	}
+
+	@Override
+	public Void visitFunctionStmt(Function function) {
+		env.define(function.name.lexeme, new LoxFunction(function));
+		return null;
 	}
 }

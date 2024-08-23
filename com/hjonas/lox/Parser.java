@@ -11,6 +11,7 @@ import static com.hjonas.lox.TokenType.EQUAL;
 import static com.hjonas.lox.TokenType.EQUAL_EQUAL;
 import static com.hjonas.lox.TokenType.FALSE;
 import static com.hjonas.lox.TokenType.FOR;
+import static com.hjonas.lox.TokenType.FUN;
 import static com.hjonas.lox.TokenType.GREATER;
 import static com.hjonas.lox.TokenType.GREATER_EQUAL;
 import static com.hjonas.lox.TokenType.IDENTIFIER;
@@ -114,7 +115,37 @@ class Parser {
 			return breakStmt;
 		}
 
+		if (match(FUN)) {
+			advance();
+			return function("function");
+		}
+
 		return expressionStatement();
+	}
+
+	Stmt function(String kind) {
+		Token name = advance();
+		consume(LEFT_PAREN, "exptected '(' after " + kind + " name.");
+		List<Token> params = new ArrayList<>();
+
+		if (!match(RIGHT_PAREN)) {
+			params.add(consume(IDENTIFIER, "expected parameter name."));
+
+			while (match(COMMA)) {
+				advance();
+				if (params.size() > 255) {
+					Lox.error(peek(), "Cant have more that 255 parameters.");
+				}
+				params.add(consume(IDENTIFIER, "expected parameter name."));
+			}
+		}
+
+		consume(RIGHT_PAREN, "exptected ')' after " + kind + " parameters.");
+		consume(LEFT_BRACE, "expected '{' before " + kind + " body.");
+
+		Stmt body = block();
+
+		return new Stmt.Function(name, params, body);
 	}
 
 	Stmt expressionStatement() {
