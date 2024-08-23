@@ -1,5 +1,7 @@
 package com.hjonas.lox;
 
+import java.util.List;
+
 import com.hjonas.lox.Stmt.Variable;
 
 public abstract class Expr {
@@ -16,6 +18,8 @@ public abstract class Expr {
 		R visitVariable(Variable variable);
 
 		R visitAssign(Assign assign);
+
+		R visitCall(Call call);
 	}
 
 	abstract <R> R accept(Visitor<R> visitor);
@@ -103,6 +107,23 @@ public abstract class Expr {
 		@Override
 		<R> R accept(Visitor<R> visitor) {
 			return visitor.visitAssign(this);
+		}
+	}
+
+	static class Call extends Expr {
+		final Token paren;
+		final Expr callee;
+		final List<Expr> arguments;
+
+		Call(Expr callee, Token paren, List<Expr> arguments) {
+			this.arguments = arguments;
+			this.callee = callee;
+			this.paren = paren;
+		}
+
+		@Override
+		<R> R accept(Visitor<R> visitor) {
+			return visitor.visitCall(this);
 		}
 	}
 }

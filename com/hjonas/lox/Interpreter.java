@@ -1,9 +1,11 @@
 package com.hjonas.lox;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.hjonas.lox.Expr.Assign;
 import com.hjonas.lox.Expr.Binary;
+import com.hjonas.lox.Expr.Call;
 import com.hjonas.lox.Expr.Grouping;
 import com.hjonas.lox.Expr.Literal;
 import com.hjonas.lox.Expr.Unary;
@@ -278,5 +280,28 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 	@Override
 	public Void visitBreakStmt(BreakStmt breakStmt) {
 		throw new BreakError(breakStmt.token, "unexpeced token 'break' outside of loop.");
+	}
+
+	@Override
+	public Object visitCall(Call call) {
+		Object callee = evaluate(call.callee);
+
+		List<Object> args = new ArrayList<>();
+		for (Expr arg : call.arguments) {
+			args.add(evaluate(arg));
+		}
+
+		if (!(callee instanceof LoxCallable)) {
+			throw new RuntimeError(call.paren, "Can oly call functions and classes.");
+		}
+
+		LoxCallable function = (LoxCallable) callee;
+
+		if (args.size() != function.arity()) {
+			throw new RuntimeError(call.paren, "Expected " + function.arity()
+					+ " arguments but got " + args.size() + ".");
+		}
+
+		return function.call(this, args);
 	}
 }

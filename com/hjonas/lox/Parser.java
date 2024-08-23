@@ -4,6 +4,7 @@ import static com.hjonas.lox.TokenType.AND;
 import static com.hjonas.lox.TokenType.BANG;
 import static com.hjonas.lox.TokenType.BANG_EQUAL;
 import static com.hjonas.lox.TokenType.BREAK;
+import static com.hjonas.lox.TokenType.COMMA;
 import static com.hjonas.lox.TokenType.ELSE;
 import static com.hjonas.lox.TokenType.EOF;
 import static com.hjonas.lox.TokenType.EQUAL;
@@ -34,6 +35,7 @@ import static com.hjonas.lox.TokenType.TRUE;
 import static com.hjonas.lox.TokenType.VAR;
 import static com.hjonas.lox.TokenType.WHILE;
 
+import java.io.Console;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -309,7 +311,36 @@ class Parser {
 			return new Expr.Unary(operator, right);
 		}
 
-		return primary();
+		return call();
+	}
+
+	Expr call() {
+		Expr expr = primary();
+
+		while (true) {
+			if (!match(LEFT_PAREN)) {
+				break;
+			}
+
+			List<Expr> args = new ArrayList<>();
+			Token paren = advance();
+
+			if (!match(RIGHT_PAREN)) {
+				args.add(expression());
+				while (match(COMMA)) {
+					if (args.size() > 255) {
+						Lox.error(peek(), "Cant have more that 255 arguments.");
+					}
+					advance();
+					args.add(expression());
+				}
+			}
+
+			consume(RIGHT_PAREN, "expected ')' after function call.");
+			expr = new Expr.Call(expr, paren, args);
+		}
+
+		return expr;
 	}
 
 	Expr primary() {
