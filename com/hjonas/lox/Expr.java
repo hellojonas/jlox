@@ -2,8 +2,6 @@ package com.hjonas.lox;
 
 import java.util.List;
 
-import com.hjonas.lox.Stmt.Variable;
-
 public abstract class Expr {
 
 	static interface Visitor<R> {

@@ -9,6 +9,7 @@ import com.hjonas.lox.Expr.Call;
 import com.hjonas.lox.Expr.Grouping;
 import com.hjonas.lox.Expr.Literal;
 import com.hjonas.lox.Expr.Unary;
+import com.hjonas.lox.Expr.Variable;
 import com.hjonas.lox.Stmt.Block;
 import com.hjonas.lox.Stmt.BreakStmt;
 import com.hjonas.lox.Stmt.Expression;
@@ -16,7 +17,7 @@ import com.hjonas.lox.Stmt.Function;
 import com.hjonas.lox.Stmt.IfStmt;
 import com.hjonas.lox.Stmt.Print;
 import com.hjonas.lox.Stmt.ReturnStmt;
-import com.hjonas.lox.Stmt.Variable;
+import com.hjonas.lox.Stmt.VariableStmt;
 import com.hjonas.lox.Stmt.WhileStmt;
 
 class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
@@ -228,12 +229,12 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 	}
 
 	@Override
-	public Object visitVariable(com.hjonas.lox.Expr.Variable variable) {
+	public Object visitVariable(Variable variable) {
 		return env.get(variable.name);
 	}
 
 	@Override
-	public Void visitVariable(Variable var) {
+	public Void visitVariableStmt(VariableStmt var) {
 		Object initializer = null;
 		if (var.initializer != null) {
 			initializer = evaluate(var.initializer);

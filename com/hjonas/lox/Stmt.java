@@ -9,7 +9,7 @@ abstract class Stmt {
 
 		R visitPrint(Print print);
 
-		R visitVariable(Variable var);
+		R visitVariableStmt(VariableStmt var);
 
 		R visitBlock(Block block);
 
@@ -52,18 +52,18 @@ abstract class Stmt {
 		}
 	}
 
-	static class Variable extends Stmt {
+	static class VariableStmt extends Stmt {
 		final Token name;
 		final Expr initializer;
 
-		Variable(Token name, Expr initializer) {
+		VariableStmt(Token name, Expr initializer) {
 			this.name = name;
 			this.initializer = initializer;
 		}
 
 		@Override
 		<R> R accept(Visitor<R> visitor) {
-			return visitor.visitVariable(this);
+			return visitor.visitVariableStmt(this);
 		}
 	}
 
