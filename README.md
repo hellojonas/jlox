@@ -1,6 +1,6 @@
 # jlox
 
-An interpreter for the jlox programming language built in java
+An interpreter for the lox programming language built in java
 
 ## How to run
 
