@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+SOURCE=$1
+
+if [[ ! -e "./target/jlox.jar" ]]; then
+	javac -d target ./com/hjonas/lox/Lox.java
+	jar cfe target/jlox.jar com.hjonas.lox.Lox target/com/hjonas/lox/*.class
+fi
+
+if [[ -z "$SOURCE" ]]; then
+	java -cp jlox.jar:target com.hjonas.lox.Lox
+else
+	java -cp jlox.jar:target com.hjonas.lox.Lox "$SOURCE"
+fi
