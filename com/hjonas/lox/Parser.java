@@ -4,6 +4,7 @@ import static com.hjonas.lox.TokenType.AND;
 import static com.hjonas.lox.TokenType.BANG;
 import static com.hjonas.lox.TokenType.BANG_EQUAL;
 import static com.hjonas.lox.TokenType.BREAK;
+import static com.hjonas.lox.TokenType.CLASS;
 import static com.hjonas.lox.TokenType.COMMA;
 import static com.hjonas.lox.TokenType.ELSE;
 import static com.hjonas.lox.TokenType.EOF;
@@ -37,7 +38,6 @@ import static com.hjonas.lox.TokenType.TRUE;
 import static com.hjonas.lox.TokenType.VAR;
 import static com.hjonas.lox.TokenType.WHILE;
 
-import java.io.Console;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -137,7 +137,7 @@ class Parser {
 		return expressionStatement();
 	}
 
-	Stmt function(String kind) {
+	Stmt.Function function(String kind) {
 		Token name = advance();
 		consume(LEFT_PAREN, "exptected '(' after " + kind + " name.");
 		List<Token> params = new ArrayList<>();
@@ -273,8 +273,8 @@ class Parser {
 			Token token = advance();
 			Expr value = or();
 
-			if (expr instanceof Expr.Variable) {
-				return new Expr.Assign(((Expr.Variable) expr).name, value);
+			if (expr instanceof Expr.VariableExpr) {
+				return new Expr.Assign(((Expr.VariableExpr) expr).name, value);
 			}
 
 			Lox.error(token, "invalid assignment identifier");
@@ -408,7 +408,7 @@ class Parser {
 			return new Expr.Literal(advance().literal);
 		}
 		if (match(IDENTIFIER)) {
-			return new Expr.Variable(advance());
+			return new Expr.VariableExpr(advance());
 		}
 
 		if (match(LEFT_PAREN)) {

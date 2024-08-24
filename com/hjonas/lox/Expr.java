@@ -13,7 +13,7 @@ public abstract class Expr {
 
 		R visitLiteral(Literal literal);
 
-		R visitVariable(Variable variable);
+		R visitVariableExpr(VariableExpr variable);
 
 		R visitAssign(Assign assign);
 
@@ -80,16 +80,16 @@ public abstract class Expr {
 		}
 	}
 
-	static class Variable extends Expr {
+	static class VariableExpr extends Expr {
 		final Token name;
 
-		Variable(Token name) {
+		VariableExpr(Token name) {
 			this.name = name;
 		}
 
 		@Override
 		<R> R accept(Visitor<R> visitor) {
-			return visitor.visitVariable(this);
+			return visitor.visitVariableExpr(this);
 		}
 	}
 

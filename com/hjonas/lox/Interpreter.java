@@ -1,7 +1,9 @@
 package com.hjonas.lox;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.hjonas.lox.Expr.Assign;
 import com.hjonas.lox.Expr.Binary;
@@ -9,7 +11,7 @@ import com.hjonas.lox.Expr.Call;
 import com.hjonas.lox.Expr.Grouping;
 import com.hjonas.lox.Expr.Literal;
 import com.hjonas.lox.Expr.Unary;
-import com.hjonas.lox.Expr.Variable;
+import com.hjonas.lox.Expr.VariableExpr;
 import com.hjonas.lox.Stmt.Block;
 import com.hjonas.lox.Stmt.BreakStmt;
 import com.hjonas.lox.Stmt.Expression;
@@ -23,6 +25,7 @@ import com.hjonas.lox.Stmt.WhileStmt;
 class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 	final Environment globals = new Environment();
 	private Environment env = globals;
+	private final Map<Expr, Integer> locals = new HashMap<>();
 
 	Interpreter() {
 		this.globals.define("clock", new LoxCallable() {
@@ -229,8 +232,18 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 	}
 
 	@Override
-	public Object visitVariable(Variable variable) {
-		return env.get(variable.name);
+	public Object visitVariableExpr(VariableExpr variable) {
+		return lookUpVariable(variable.name, variable);
+	}
+
+	private Object lookUpVariable(Token name, Expr expr) {
+		Integer distance = locals.get(expr);
+
+		if (distance != null) {
+			return env.getAt(distance, name.lexeme);
+		} else {
+			return globals.get(name);
+		}
 	}
 
 	@Override
@@ -245,7 +258,15 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 
 	@Override
 	public Object visitAssign(Assign assign) {
-		return env.assign(assign.name, evaluate(assign.value));
+		Object value = evaluate(assign.value);
+		Integer distance = locals.get(assign);
+
+		if (distance != null) {
+			env.assignAt(distance, assign.name, value);
+		} else {
+			globals.assign(assign.name, value);
+		}
+		return value;
 	}
 
 	@Override
@@ -335,5 +356,9 @@ class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 		}
 
 		throw new Return(value);
+	}
+
+	public void resolve(Expr expr, int depth) {
+		locals.put(expr, depth);
 	}
 }

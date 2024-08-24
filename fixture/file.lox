@@ -1,18 +1,11 @@
-fun makeAdder(n) {
-	fun add (a) {
-		return n + a;
+var a = 10;
+
+{
+	fun showA() {
+		print a;
 	}
 
-	return add;
+	showA();
+	var a = 11;
+	showA();
 }
-
-var a1 = makeAdder(10);
-
-print a1(4);
-
-fun scope(a) {
-	var a = 10;
-	print a;
-}
-
-scope(11);

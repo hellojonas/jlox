@@ -60,6 +60,17 @@ public class Lox {
 		List<Token> tokens = scanner.scanTokens();
 		List<Stmt> statements = new Parser(tokens).parse();
 
+		if (hadError) {
+			return;
+		}
+
+		Resolver resolver = new Resolver(interpreter);
+		resolver.resolve(statements);
+
+		if (hadError) {
+			return;
+		}
+
 		try {
 			interpreter.interpret(statements);
 		} catch (RuntimeError e) {
